@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Message Board</title>
+</head>
+
+<body>
+    <h1>Community Message Board</h1>
+
+    <div id="register-view">
+        <h2>Creat an Account</h2>
+
+        <form action="" id="register-form">
+            <input type="text" id="register-username">
+            <input type="password" id="register-password">
+            <button type="submit">Register</button>
+            <p id="status-message"></p>
+
+        </form>
+    </div>
+
+    <div id="login-view">
+        <h2>Log In</h2>
+
+        <form action="">
+            <input type="text" id="login-username">
+            <input type="password" id="login-password">
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <div id="feed-view">
+        <h2>Public Feed</h2>
+
+        <button id="logout-btn">Logout</button>
+
+        <form action="">
+            <input type="text" id="post-content">
+            <button>Submit</button>
+        </form>
+
+        <ul id="post-list"></ul>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
