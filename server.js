@@ -1,12 +1,11 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
-const cors = require('cors');
 const app = express();
 const port = 3000;
 
 app.use(express.json());
-app.use(cors());
+app.use(express.static('public'));
 
 const session = require('express-session');
 
@@ -83,14 +82,21 @@ app.post('/login', (req, res) => {
 
     db.get('SELECT * FROM users WHERE username = ?', [username], (err, row) => {
         if (!row) {
-            res.send("User not found")
+            res.json({
+                message: "User not found"
+            })
         } else {
             bcrypt.compare(password, row.password_hash, (err, result) => {
                 if (result === true) {
                     req.session.userId = row.id;
-                    res.send("Login successful!")
+                    res.json({
+                        message: "Login successful!",
+                        user: row
+                    })
                 } else {
-                    res.send("Incorrect password")
+                    res.json({
+                        message: "Incorrect password"}
+                    )
                 }
             })
         }
