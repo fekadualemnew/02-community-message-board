@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community Message Board</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <h1>Community Message Board</h1>
 
     <div id="register-view">
-        <h2>Creat an Account</h2>
+        <h2>Create an Account</h2>
 
         <form action="" id="register-form">
             <input type="text" id="register-username">
@@ -33,6 +34,8 @@
     </div>
 
     <div id="feed-view">
+        <h2 id="welcome-message"></h2>
+        
         <h2>Public Feed</h2>
 
         <form action="" id="send-message">
@@ -41,6 +44,8 @@
         </form>
 
         <button id="logout-btn">Logout</button>
+
+        <button id="delete-all-btn">Delete All</button>
 
         <ul id="post-list"></ul>
     </div>

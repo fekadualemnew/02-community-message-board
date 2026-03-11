@@ -30,7 +30,8 @@ const db = new sqlite3.Database('./database.db', (err) => {
                 console.log('The users table is created!');
             }
         })
-        db.run('CREATE TABLE IF NOT EXISTS posts(id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT, user_id INTEGER)', (err) => {
+        
+        db.run('CREATE TABLE IF NOT EXISTS posts(id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT, user_id INTEGER, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)', (err) => {
             if (err) {
                 console.error('Failed to create table:', err.message);
             } else {
@@ -95,7 +96,8 @@ app.post('/login', (req, res) => {
                     })
                 } else {
                     res.json({
-                        message: "Incorrect password"}
+                        message: "Incorrect password"
+                    }
                     )
                 }
             })
@@ -161,9 +163,9 @@ app.post('/posts', requireAuth, (req, res) => {
 
 
 app.get('/posts', (req, res) => {
-    const sql = `SELECT posts.content, users.username 
+    const sql = `SELECT posts.content, users.username, posts.id, posts.created_at
     FROM posts 
-    JOIN users ON posts.user_id = users.id`;
+    JOIN users ON posts.user_id = users.id  ORDER BY posts.created_at DESC`;
 
     db.all(sql, [], (err, rows) => {
         if (err) {
@@ -174,3 +176,58 @@ app.get('/posts', (req, res) => {
         }
     });
 });
+
+
+
+app.delete('/posts/all', (req,res) => {
+
+    const sql = 'DELETE FROM posts';
+    db.run (sql, (err) => {
+        if(err) {
+            console.error(err.message);
+            return res.status(500).send("Error deleting all posts");
+        } else {
+            res.send("The deletion is Successful!")
+        }
+    }) 
+})
+
+
+
+app.delete('/posts/:id', requireAuth, (req, res) => {
+    const postId = req.params.id;
+    const userId = req.session.userId;
+
+    const sql = 'DELETE FROM posts WHERE id = ? AND user_id = ?';
+    db.run(sql, [postId, userId], (err) => {
+        if (err) {
+            console.error(err.message);
+            return res.status(500).send("Error deleting post");
+        } else {
+            res.send("The deletion is Succesful!")
+        }
+    })
+})
+
+
+
+app.put('/posts/:id', requireAuth, (req,res) => {
+    const postId = req.params.id;
+    const userId = req.session.userId;
+    const newContent = req.body.content;
+
+    const sql = 'UPDATE posts SET content = ? WHERE id = ? AND user_id = ?';
+
+    db.run(sql, [newContent, postId, userId], (err) => {
+        if(err) {
+            console.error(err.message);
+            return res.status(500).send("Error upadating post");
+        } else {
+            res.send("Post updated successfuly!")
+        }
+    });
+});
+
+
+
+

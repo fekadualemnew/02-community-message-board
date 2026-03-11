@@ -1,0 +1,11 @@
+small {
+    display: block;
+    color: gray;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+
+#feed-view {
+    display: none;
+}
