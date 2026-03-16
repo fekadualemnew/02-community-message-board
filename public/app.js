@@ -2,6 +2,7 @@
 const registerForm = document.getElementById('register-form');
 const statusMessage = document.getElementById("status-message");
 let currentUser = null;
+let isAdmin = null;
 
 registerForm.addEventListener('submit', async function (event) {
     event.preventDefault();
@@ -74,8 +75,17 @@ loginForm.addEventListener('submit', async (e) => {
         statusMessage.textContent = "Login Successfully!";
         loginView.style.display = "none";
         feedView.style.display = "block";
+
         fetchPosts();
+
+        isAdmin = data.user.is_admin;
         currentUser = data.user.username;
+
+        if(isAdmin){
+            deleteAllBtn.style.display = "block";
+        } else{
+            deleteAllBtn.style.display = "none";
+        }
 
         //WELCOME MESSAGE
         const welcomeMessage = document.getElementById('welcome-message');
@@ -191,6 +201,7 @@ logoutBtn.addEventListener('click', async function () {
     });
 
     currentUser = null;
+    isAdmin = null;
     feedView.style.display = "none";
     loginView.style.display = "block";
 })

@@ -23,7 +23,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
     }
     else {
         console.log("Connection to the SQLite database.")
-        db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE , password_hash TEXT)', (err) => {
+        db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE , password_hash TEXT, is_admin)', (err) => {
             if (err) {
                 console.error('Failed to create table:', err.message);
             } else {
@@ -90,6 +90,7 @@ app.post('/login', (req, res) => {
             bcrypt.compare(password, row.password_hash, (err, result) => {
                 if (result === true) {
                     req.session.userId = row.id;
+                    req.session.is_admin = row.is_admin;
                     res.json({
                         message: "Login successful!",
                         user: row
@@ -97,12 +98,10 @@ app.post('/login', (req, res) => {
                 } else {
                     res.json({
                         message: "Incorrect password"
-                    }
-                    )
+                    })
                 }
             })
         }
-
     })
 })
 
@@ -131,6 +130,15 @@ app.post('/logout', (req, res) => {
     })
 })
 
+const requireAdmin = (req, res, next) => {
+    const profile = req.session.is_admin;
+
+    if(profile === 1) {
+        next();
+    } else {
+        res.status(401).send("Admins only!");
+    }   
+}
 
 
 const requireAuth = (req, res, next) => {
@@ -161,7 +169,6 @@ app.post('/posts', requireAuth, (req, res) => {
 
 
 
-
 app.get('/posts', (req, res) => {
     const sql = `SELECT posts.content, users.username, posts.id, posts.created_at
     FROM posts 
@@ -179,7 +186,7 @@ app.get('/posts', (req, res) => {
 
 
 
-app.delete('/posts/all', (req,res) => {
+ app.delete('/posts/all',requireAdmin , (req,res) => {
 
     const sql = 'DELETE FROM posts';
     db.run (sql, (err) => {
